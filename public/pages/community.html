@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <script>try{var t=localStorage.getItem("edurise-theme");if(t)document.documentElement.setAttribute("data-theme",t);var a=localStorage.getItem("edurise-accent");if(a)document.documentElement.setAttribute("data-accent",a);var k=localStorage.getItem("edurise-skin");if(k)document.documentElement.setAttribute("data-skin",k);var z=localStorage.getItem("edurise-textsize");if(z&&z!=="M")document.documentElement.setAttribute("data-textsize",z);var m=localStorage.getItem("edurise-motion");if(m==="reduce")document.documentElement.setAttribute("data-motion","reduce");}catch(e){}</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community Wall | EduRise</title>
+  <meta name="description" content="EduRise Study Tracker: your timetable, goals, study streaks and a focus timer. Everything saves privately on your own device." />
+  <meta property="og:title" content="Study Tracker | EduRise" />
+  <meta property="og:description" content="Timetable, goals, streaks and a focus timer — saved privately on your device." />
+  <meta property="og:image" content="https://edurise-edu-rise.vercel.app/og-image.png" />
+  <link rel="icon" href="/favicon.ico?v=3" />
+  <link rel="stylesheet" href="/assets/css/app.css" />
+  <style>
+    #timer-display { font-size: 42px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  </style>
+  <style>
+    .cat-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 5px; background: var(--bg2); border: 1px solid var(--border); border-radius: 999px; margin-bottom: 14px; }
+    .cat-tab { border: none; background: transparent; color: var(--muted); font: inherit; font-weight: 600; font-size: 14.5px; padding: 12px; border-radius: 999px; cursor: pointer; }
+    .cat-tab.active { background: #1B2A52; color: #fff; }
+    [data-theme="dark"] .cat-tab.active { background: #2a3f85; }
+    .t-list { display: grid; gap: 12px; margin-top: 18px; }
+    .t-row { display: flex; align-items: center; gap: 14px; padding: 16px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg2); cursor: pointer; transition: border-color .15s; }
+    .t-row:hover { border-color: #F2762E; }
+    .t-row .ic { width: 30px; height: 30px; color: #F2762E; flex: none; }
+    .t-row .t-copy { flex: 1; min-width: 0; }
+    .t-row b { display: block; font-size: 15.5px; }
+    .t-row .muted { font-size: 13px; }
+.me-strip { display: inline-flex; align-items: center; gap: 7px; margin: 14px 0 0; background: rgba(242,118,46,.12); color: #F2762E; font-weight: 800; padding: 8px 15px; border-radius: 999px; font-size: 13px; }
+.t-row .row-btn { flex: none; padding: 9px 16px; font-size: 13px; border: none; border-radius: 10px; background: #F2762E; color: #fff; font-weight: 800; cursor: pointer; }
+.t-row .row-btn.ghost { background: transparent; border: 1.5px solid var(--border); color: var(--ink); font-weight: 600; }
+.t-row .row-btn:disabled { opacity: .6; cursor: default; }
+@media (max-width: 640px) {
+  .t-row { flex-wrap: wrap; }
+  .t-copy { flex: 1 1 100%; }
+  .t-row .row-btn { flex: 1 1 100%; max-width: 100%; margin-top: 4px; }
+  .me-strip { max-width: 100%; flex-wrap: wrap; }
+}
+    .live-pill { background: #15803d; color: #fff; font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; }
+    .ended-pill { background: var(--border); color: var(--ink); font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; }
+    .detail-split { display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; }
+    .bracket-wrap { margin-top: 14px; display: flex; gap: 14px; overflow-x: auto; padding-bottom: 6px; }
+    .br-round { flex: 1 0 150px; min-width: 150px; }
+    .br-round h4 { margin: 0 0 8px; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); text-align: center; }
+    .br-match { border: 1.5px solid var(--border); border-radius: 12px; background: var(--bg2); margin-bottom: 10px; overflow: hidden; }
+    .br-team { display: flex; justify-content: space-between; gap: 8px; padding: 8px 10px; font-size: 13px; font-weight: 700; align-items: center; }
+    .br-team + .br-team { border-top: 1px solid var(--border); position: relative; }
+    .br-team .br-score { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .br-team.win { background: rgba(34,197,94,.09); color: #4ade80; }
+    .br-team.win .br-score { color: #4ade80; }
+    .br-team.lose { opacity: .45; }
+    .br-team.empty { color: var(--muted); font-weight: 600; opacity: .55; justify-content: center; }
+    .br-team .byout { font-size: 10px; color: var(--muted); font-weight: 700; }
+    .br-vs { position: absolute; left: 50%; top: -10px; transform: translateX(-50%); background: #F2762E; color: #fff; font-size: 9.5px; font-weight: 900; padding: 2px 8px; border-radius: 999px; letter-spacing: .06em; z-index: 1; }
+    .br-champ { margin-top: 12px; border: 1.5px solid #F2762E; background: linear-gradient(135deg, rgba(242,118,46,.16), rgba(242,118,46,.05)); border-radius: 14px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+    .br-champ .trophy { font-size: 26px; }
+    @media (max-width: 820px) { .detail-split { grid-template-columns: 1fr; } }
+    .track-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 16px 0 4px; }
+    .track-card { display: grid; gap: 6px; justify-items: start; text-align: left; padding: 16px; border: 1.5px solid var(--border); border-radius: 14px; background: var(--bg2); font: inherit; cursor: pointer; transition: all .15s; }
+    .track-card:hover { border-color: #F2762E; transform: translateY(-2px); }
+    .track-card .ic { width: 24px; height: 24px; color: #F2762E; }
+    .track-card b { font-size: 15.5px; }
+    .track-card span { font-size: 12.5px; color: var(--muted); }
+    .track-card em { font-style: normal; font-size: 12.5px; font-weight: 700; color: #F2762E; }
+    .track-card:disabled { opacity: .5; cursor: default; transform: none; }
+    .round-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 16px; }
+    .live-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #22c55e; margin-left: 4px; animation: pulse 1.6s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
+    .lb-row { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-bottom: 1px solid var(--border); }
+    .lb-row:last-child { border-bottom: none; }
+    .lb-rank { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 10px; background: var(--bg2); font-weight: 800; font-size: 13px; flex: none; }
+    .lb-rank.gold { background: #f59e0b; color: #1B2A52; }
+    .lb-rank.silver { background: #cbd5e1; color: #1B2A52; }
+    .lb-rank.bronze { background: #d97706; color: #1B2A52; }
+    .lb-name { flex: 1; min-width: 0; overflow-wrap: anywhere; font-weight: 600; font-size: 14.5px; }
+    .lb-sub { font-size: 12px; color: var(--muted); font-weight: 400; }
+    .lb-total { font-weight: 800; font-size: 15px; color: #F2762E; }
+    .eyebrow { margin: 0 0 8px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; color: #F2762E; }
+    #quiz-overlay { position: fixed; inset: 0; z-index: 200; background: var(--bg); overflow-y: auto; display: flex; justify-content: center; }
+    [hidden] { display: none !important; }
+    .q-wrap { width: 100%; max-width: 640px; padding: 24px 18px 60px; }
+    .q-top { display: flex; justify-content: space-between; align-items: center; font-size: 13.5px; font-weight: 600; color: var(--muted); }
+    .q-timer { display: inline-flex; align-items: center; gap: 6px; color: #F2762E; }
+    .q-timer .ic { width: 16px; height: 16px; }
+    .q-bar { height: 6px; border-radius: 999px; background: var(--bg2); margin: 12px 0 18px; overflow: hidden; }
+    #q-barfill { display: block; height: 100%; background: linear-gradient(90deg, #F2762E, #ffb37e); border-radius: 999px; transition: width .95s linear; }
+    .q-track { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #F2762E; margin-bottom: 6px; }
+    #q-question { font-size: clamp(19px, 4.6vw, 24px); line-height: 1.35; margin: 4px 0 20px; }
+    #q-options { display: grid; gap: 10px; }
+    .q-opt { display: flex; align-items: center; gap: 12px; padding: 15px 16px; border: 1.5px solid var(--border); border-radius: 13px; background: var(--card); font: inherit; font-size: 15px; text-align: left; cursor: pointer; transition: all .12s; }
+    .q-opt:hover { border-color: #F2762E; }
+    .q-opt .key { width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; background: var(--bg2); font-weight: 800; font-size: 13px; flex: none; }
+    .q-opt.picked { border-color: #F2762E; background: rgba(242,118,46,.12); }
+    .result-card { max-width: 680px; }
+    .rev-item { border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 10px; background: var(--bg2); }
+    .rev-item.wrong { border-color: rgba(239,68,68,.45); }
+    .rev-head { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+    .rev-q { font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+    .rev-opt { font-size: 13.5px; color: var(--muted); margin: 2px 0; }
+    .rev-opt.ok { color: #22c55e; font-weight: 700; }
+    .rev-opt.bad { color: #f87171; }
+    .rev-why { font-size: 13px; margin-top: 8px; color: var(--muted); border-top: 1px dashed var(--border); padding-top: 8px; }
+    .create-panel { border: 1px dashed var(--border); border-radius: 12px; padding: 12px 14px; margin-top: 14px; }
+    .create-panel summary { cursor: pointer; font-weight: 700; font-size: 14px; }
+    .create-panel form { margin-top: 12px; }
+    .t-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; align-items: center; }
+    .t-meta .muted { font-size: 13px; }
+
+/* ---------- Battle board (VS cards) ---------- */
+.battle-board { display: grid; gap: 14px; margin-top: 14px; }
+.vs-card { position: relative; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; padding: 18px 14px; border-radius: 16px; border: 1.5px solid var(--border); background: linear-gradient(135deg, #1B2A52, rgba(45,66,124,.75)); color: #fff; overflow: hidden; }
+.vs-card.mine { border-color: #F2762E; box-shadow: 0 6px 22px rgba(242,118,46,.25); }
+.vs-side { min-width: 0; text-align: center; }
+.vs-name { font-weight: 900; font-size: clamp(12px, 2.6vw, 15px); text-transform: uppercase; letter-spacing: .04em; overflow-wrap: anywhere; }
+.vs-score { font-weight: 800; color: #F2762E; font-size: 19px; margin-top: 3px; }
+.vs-tag { display: inline-block; margin-top: 7px; font-size: 10px; font-weight: 800; letter-spacing: .09em; padding: 2.5px 9px; border-radius: 999px; text-transform: uppercase; background: rgba(255,255,255,.1); color: #cbd5e1; }
+.vs-side.leading .vs-name { color: #F2762E; }
+.vs-side.leading .vs-tag { background: rgba(242,118,46,.18); color: #F2762E; }
+.vs-vs { width: 46px; height: 46px; border-radius: 12px; background: #F2762E; color: #fff; font-weight: 900; font-size: 15px; display: grid; place-items: center; transform: rotate(-6deg); letter-spacing: .05em; box-shadow: 0 6px 16px rgba(242,118,46,.45); flex: none; }
+html[data-theme="light"] .vs-card { background: linear-gradient(135deg, #1B2A52, #33487f); }
+
+/* ---------- VS intro splash (round start) ---------- */
+#vs-overlay { position: fixed; inset: 0; z-index: 210; background: rgba(8,13,30,.95); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px; padding: 20px; }
+.vs-intro { display: flex; align-items: center; justify-content: center; gap: 14px; max-width: 92vw; }
+.vs-intro .vs-side { max-width: 38vw; }
+.vs-intro .vs-name { color: #fff; font-size: clamp(15px, 4.2vw, 25px); text-shadow: 0 2px 18px rgba(0,0,0,.6); }
+.vs-a { animation: vsSlideL .5s cubic-bezier(.22,1,.36,1) both; }
+.vs-b { animation: vsSlideR .5s cubic-bezier(.22,1,.36,1) both .15s; }
+@keyframes vsSlideL { from { opacity: 0; transform: translateX(-70px); } to { opacity: 1; transform: none; } }
+@keyframes vsSlideR { from { opacity: 0; transform: translateX(70px); } to { opacity: 1; transform: none; } }
+.vs-mid { font-size: clamp(36px, 9vw, 58px); font-weight: 900; color: #F2762E; transform: rotate(-6deg); animation: vsPop .5s cubic-bezier(.34,1.56,.64,1) both .3s; text-shadow: 0 6px 30px rgba(242,118,46,.55); }
+@keyframes vsPop { from { opacity: 0; transform: scale(.2) rotate(-20deg); } to { opacity: 1; transform: scale(1) rotate(-6deg); } }
+.vs-track { color: #fff; opacity: .8; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; font-size: 12px; animation: vsSlideL .4s both .5s; }
+
+/* ---------- How to enter ---------- */
+.howto { list-style: none; display: grid; gap: 7px; margin: 12px 0 16px; padding: 0; font-size: 13.5px; }
+.howto li { display: flex; gap: 9px; align-items: center; color: var(--muted); }
+.howto li::before { content: counter(hs); counter-increment: hs; width: 22px; height: 22px; border-radius: 8px; background: var(--bg2); display: grid; place-items: center; font-weight: 800; font-size: 12px; flex: none; }
+.howto { counter-reset: hs; }
+.howto li.done { color: #22c55e; }
+.howto li.done::before { content: "✓"; background: rgba(34,197,94,.14); color: #22c55e; }
+.howto li.now { color: #F2762E; font-weight: 700; }
+.howto li.now::before { background: #F2762E; color: #fff; }
+  </style>
+  <link rel="manifest" href="/manifest.webmanifest?v=3" /><meta name="theme-color" content="#1B2A52" /><meta name="mobile-web-app-capable" content="yes" /><meta name="apple-mobile-web-app-capable" content="yes" /><meta name="apple-mobile-web-app-title" content="EduRise" />
+</head>
+<body>
+<header class="site">
+    <a class="brand" href="/home"><svg class="edl" viewBox="0 0 120 120" width="26" height="26" role="img" aria-label="EduRise logo" style="flex:none"><style>.edl .petals{animation:edlspin 2s cubic-bezier(.3,.75,.4,1) forwards;transform-origin:60px 60px}.edl .pet{animation:edlrev 2s cubic-bezier(.3,.75,.4,1) forwards}@keyframes edlspin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}@keyframes edlrev{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}@media(prefers-reduced-motion:reduce){.edl .petals,.edl .pet{animation:none}}</style><g class="petals"><g class="pet" style="transform-origin:60.0px 19.0px"><circle cx="60.0" cy="19.0" r="13" fill="none" stroke="#F2762E" stroke-width="3" stroke-linecap="round" stroke-dasharray="58 23.7"/><text x="60.0" y="23.7" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" fill="#F2762E">D</text></g><g class="pet" style="transform-origin:95.5px 39.5px"><circle cx="95.5" cy="39.5" r="13" fill="none" stroke="#F2762E" stroke-width="3" stroke-linecap="round" stroke-dasharray="58 23.7"/><text x="95.5" y="44.2" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" fill="#F2762E">U</text></g><g class="pet" style="transform-origin:95.5px 80.5px"><circle cx="95.5" cy="80.5" r="13" fill="none" stroke="#F2762E" stroke-width="3" stroke-linecap="round" stroke-dasharray="58 23.7"/><text x="95.5" y="85.2" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" fill="#F2762E">R</text></g><g class="pet" style="transform-origin:60.0px 101.0px"><circle cx="60.0" cy="101.0" r="13" fill="none" stroke="#F2762E" stroke-width="3" stroke-linecap="round" stroke-dasharray="58 23.7"/><text x="60.0" y="105.7" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" fill="#F2762E">I</text></g><g class="pet" style="transform-origin:24.5px 80.5px"><circle cx="24.5" cy="80.5" r="13" fill="none" stroke="#F2762E" stroke-width="3" stroke-linecap="round" stroke-dasharray="58 23.7"/><text x="24.5" y="85.2" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" fill="#F2762E">S</text></g><g class="pet" style="transform-origin:24.5px 39.5px"><circle cx="24.5" cy="39.5" r="13" fill="none" stroke="#F2762E" stroke-width="3" stroke-linecap="round" stroke-dasharray="58 23.7"/><text x="24.5" y="44.2" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" fill="#F2762E">E</text></g></g><circle cx="60" cy="60" r="27" fill="none" stroke="#F2762E" stroke-width="3"/><text x="60" y="58" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="800" fill="#F2762E">E</text><path d="M60 63.5 C56 61.5 51 61.5 47.5 63.5 L47.5 70 C51 68 56 68 60 70 C64 68 69 68 72.5 70 L72.5 63.5 C69 61.5 64 61.5 60 63.5 Z" fill="#F2762E"/><text x="60" y="78" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="6.5" font-weight="700" letter-spacing="2" fill="#F2762E">EDURISE</text></svg>EduRise</a>
+    <nav class="primary">
+      <a href="/student">Students</a>
+      <a href="/study">Study</a>
+      <a href="/tutor">AI Tutor</a>
+      <a href="/school-finder">School Finder</a>
+      <a href="/chat">Rooms</a><a href="/community">Community</a><a href="/competitions">Competitions</a>
+      <details class='more-menu'>
+        <summary aria-label='Open menu' class='menu-pill'><svg class='ic' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' aria-hidden='true'><line x1='4' y1='7' x2='20' y2='7'/><line x1='4' y1='12' x2='20' y2='12'/><line x1='4' y1='17' x2='20' y2='17'/></svg><span>Menu</span><svg class='ic chev' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><polyline points='6 9 12 15 18 9'/></svg></summary>
+        <div class='menu-panel'>
+          <div class='menu-head'>
+<svg class="edl" viewBox="0 0 120 120" width="40" height="40" role="img" aria-label="EduRise logo" style="flex:none"><style>.edl .petals{animation:edlspin 2s cubic-bezier(.3,.75,.4,1) forwards;transform-origin:60px 60px}.edl .pet{animation:edlrev 2s cubic-bezier(.3,.75,.4,1) forwards}@keyframes edlspin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}@keyframes edlrev{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}@media(prefers-reduced-motion:reduce){.edl .petals,.edl .pet{animation:none}}</style><g class="petals"><g class="pet" style="transform-origin:60.0px 19.0px"><circle cx="60.0" cy="19.0" r="13" fill="none" stroke="#F2762E" stroke-width="3" stroke-linecap="round" stroke-dasharray="58 23.7"/><text x="60.0" y="23.7" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" fill="#F2762E">D</text></g><g class="pet" style="transform-origin:95.5px 39.5px"><circle cx="95.5" cy="39.5" r="13" fill="none" stroke="#F2762E" stroke-width="3" stroke-linecap="round" stroke-dasharray="58 23.7"/><text x="95.5" y="44.2" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" fill="#F2762E">U</text></g><g class="pet" style="transform-origin:95.5px 80.5px"><circle cx="95.5" cy="80.5" r="13" fill="none" stroke="#F2762E" stroke-width="3" stroke-linecap="round" stroke-dasharray="58 23.7"/><text x="95.5" y="85.2" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" fill="#F2762E">R</text></g><g class="pet" style="transform-origin:60.0px 101.0px"><circle cx="60.0" cy="101.0" r="13" fill="none" stroke="#F2762E" stroke-width="3" stroke-linecap="round" stroke-dasharray="58 23.7"/><text x="60.0" y="105.7" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" fill="#F2762E">I</text></g><g class="pet" style="transform-origin:24.5px 80.5px"><circle cx="24.5" cy="80.5" r="13" fill="none" stroke="#F2762E" stroke-width="3" stroke-linecap="round" stroke-dasharray="58 23.7"/><text x="24.5" y="85.2" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" fill="#F2762E">S</text></g><g class="pet" style="transform-origin:24.5px 39.5px"><circle cx="24.5" cy="39.5" r="13" fill="none" stroke="#F2762E" stroke-width="3" stroke-linecap="round" stroke-dasharray="58 23.7"/><text x="24.5" y="44.2" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" fill="#F2762E">E</text></g></g><circle cx="60" cy="60" r="27" fill="none" stroke="#F2762E" stroke-width="3"/><text x="60" y="58" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="800" fill="#F2762E">E</text><path d="M60 63.5 C56 61.5 51 61.5 47.5 63.5 L47.5 70 C51 68 56 68 60 70 C64 68 69 68 72.5 70 L72.5 63.5 C69 61.5 64 61.5 60 63.5 Z" fill="#F2762E"/><text x="60" y="78" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="6.5" font-weight="700" letter-spacing="2" fill="#F2762E">EDURISE</text></svg>
+            <div><b>EduRise</b><small>Every school in the zone, one community</small></div>
+          </div>
+          <p class='menu-heading'>Navigation &amp; portals</p>
+          <a class='menu-item' href='/home' data-nav='/home'><svg class='ic mi' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'/><polyline points='9 22 9 12 15 12 15 22'/></svg><span>Home</span></a>
+          <a class='menu-item' href='/student' data-nav='/student'><svg class='ic mi' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M23 21v-2a4 4 0 0 0-3-3.87'/><path d='M16 3.13a4 4 0 0 1 0 7.75'/></svg><span>Students</span></a>
+          <a class='menu-item' href='/study' data-nav='/study'><svg class='ic mi' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><rect x='3' y='4' width='18' height='18' rx='2' ry='2'/><line x1='16' y1='2' x2='16' y2='6'/><line x1='8' y1='2' x2='8' y2='6'/><line x1='3' y1='10' x2='21' y2='10'/></svg><span>Study Tracker</span></a>
+          <a class='menu-item' href='/tutor' data-nav='/tutor'><svg class='ic mi' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><rect x='4' y='4' width='16' height='16' rx='2'/><rect x='9' y='9' width='6' height='6'/><line x1='9' y1='1' x2='9' y2='4'/><line x1='15' y1='1' x2='15' y2='4'/><line x1='9' y1='20' x2='9' y2='23'/><line x1='15' y1='20' x2='15' y2='23'/><line x1='20' y1='9' x2='23' y2='9'/><line x1='20' y1='14' x2='23' y2='14'/><line x1='1' y1='9' x2='4' y2='9'/><line x1='1' y1='14' x2='4' y2='14'/></svg><span>AI Tutor</span></a>
+          <a class='menu-item' href='/past-questions' data-nav='/past-questions'><svg class='ic mi' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M12 20h9'/><path d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z'/></svg><span>Past Questions</span></a><a class='menu-item' href='/practice' data-nav='/practice'><svg class='ic mi' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><circle cx='12' cy='12' r='10'/><circle cx='12' cy='12' r='6'/><circle cx='12' cy='12' r='2'/></svg><span>JAMB Practice Test</span></a>
+          <a class='menu-item' href='/chat' data-nav='/chat'><svg class='ic mi' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z'/></svg><span>Zone rooms</span></a><a class='menu-item' href='/community' data-nav='/community'><svg class='ic mi' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'/></svg><span>Community wall</span></a><a class='menu-item' href='/competitions' data-nav='/competitions'><svg class='ic mi' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M6 9H4.5a2.5 2.5 0 0 1 0-5H6'/><path d='M18 9h1.5a2.5 2.5 0 0 0 0-5H18'/><path d='M4 22h16'/><path d='M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22'/><path d='M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22'/><path d='M18 2H6v7a6 6 0 0 0 12 0V2Z'/></svg><span>Competitions</span></a>
+          <a class='menu-item' href='/school-finder' data-nav='/school-finder'><svg class='ic mi' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><circle cx='12' cy='12' r='10'/><line x1='22' y1='12' x2='18' y2='12'/><line x1='6' y1='12' x2='2' y2='12'/><line x1='12' y1='6' x2='12' y2='2'/><line x1='12' y1='22' x2='12' y2='18'/></svg><span>School Finder</span></a>
+          <p class='menu-heading'>For schools</p>
+          <a class='menu-item' href='/register' data-nav='/register'><svg class='ic mi' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><rect x='4' y='3' width='16' height='18' rx='1.5'/><line x1='4' y1='9' x2='20' y2='9'/><path d='M10 21v-4h4v4'/><path d='M9.5 6.5l1.5-1 1.5 1'/><line x1='8' y1='12.5' x2='12' y2='12.5'/><line x1='14' y1='12.5' x2='16' y2='12.5'/><line x1='8' y1='15' x2='12' y2='15'/></svg><span>Register your school</span></a>
+          <a class='menu-item' href='/dashboard' data-nav='/dashboard'><svg class='ic mi' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><line x1='18' y1='20' x2='18' y2='10'/><line x1='12' y1='20' x2='12' y2='4'/><line x1='6' y1='20' x2='6' y2='14'/></svg><span>Staff dashboard</span></a>
+          <a class='menu-item' href='/settings' data-nav='/settings'><svg class='ic mi' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><circle cx='12' cy='12' r='3'/><path d='M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z'/></svg><span>Account settings</span></a>
+          <div class='sep'></div>
+          <div class='menu-cta-row'>
+            <a class='menu-cta solid' href='/sign-in'><svg class='ic' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4'/><polyline points='10 17 15 12 10 7'/><line x1='15' y1='12' x2='3' y2='12'/></svg><span>Sign In (Staff)</span></a>
+            <a class='menu-cta outline' href='/register'><svg class='ic' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' aria-hidden='true'><path d='M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/><circle cx='8.5' cy='7' r='4'/><line x1='20' y1='8' x2='20' y2='14'/><line x1='23' y1='11' x2='17' y2='11'/></svg><span>Sign Up (Register)</span></a>
+          </div>
+          <p class='menu-legal'><a href='/privacy'>Privacy</a> · <a href='/terms'>Terms</a></p>
+        </div>
+      </details>
+    </nav>
+  </header>
+  <main class="wide">
+    <section class="hero community-hero">
+      <p class="eyebrow">Every school in the zone · one shared community</p>
+      <h1>The zone wall</h1>
+      <p>A controlled space where students and teachers from different schools share ideas, ask questions and cheer each other on. No names, no phone numbers, no links — just the zone talking to itself.</p>
+      <div class="hero-pills">
+        <span class="pill">Student or teacher</span>
+        <span class="pill">Your school is shown</span>
+        <span class="pill">5 posts an hour max</span>
+        <span class="pill">Reported posts come down fast</span>
+      </div>
+    </section>
+
+    <div class="wall-grid">
+      <section class="card composer">
+        <h2>Say something to the zone</h2>
+        <label class="field">
+          <span>I am a</span>
+          <select id="role">
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Posting for</span>
+          <select id="school"><option value="">Loading schools…</option></select>
+        </label>
+        <div class="chips" id="topics" role="group" aria-label="Topic">
+          <button type="button" class="chip active" data-topic="general">General</button>
+          <button type="button" class="chip" data-topic="study">Study</button>
+          <button type="button" class="chip" data-topic="exams">Exams</button>
+          <button type="button" class="chip" data-topic="careers">Careers</button>
+          <button type="button" class="chip" data-topic="sports">Sports</button>
+          <button type="button" class="chip" data-topic="ideas">Ideas</button>
+        </div>
+        <textarea id="body" rows="5" maxlength="600" placeholder="Share an idea, a study tip, a question for other schools…"></textarea>
+        <div class="composer-foot">
+          <span id="count" class="muted">0 / 600</span>
+          <button class="btn accent" id="post">Post to the zone</button>
+        </div>
+        <p id="msg" class="error"></p>
+        <p class="muted small">Keep it kind and safe. Never post your name, phone number, address or links. Posts that break the rules go to a moderator instead of the wall.</p>
+      </section>
+
+      <section class="feed-wrap">
+        <div class="feed-head">
+          <h2>The wall</h2>
+          <div class="feed-filter" id="filter" role="group" aria-label="Filter the wall">
+            <button type="button" class="chip active" data-filter="all">All</button>
+            <button type="button" class="chip" data-filter="study">Study</button>
+            <button type="button" class="chip" data-filter="exams">Exams</button>
+            <button type="button" class="chip" data-filter="sports">Sports</button>
+            <button type="button" class="chip" data-filter="ideas">Ideas</button>
+          </div>
+        </div>
+        <div id="feed" class="feed"><p class="muted">Loading the wall…</p></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site">© 2026 EduRise · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/register">Register your school</a></footer>
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/api.js"></script>
+  <script src="/assets/js/community-wall.js" defer></script>
+  <script src="/assets/js/cookie-banner.js" defer></script>
+  <script src="/assets/js/analytics.js" defer></script>
+  <script src="/assets/js/animations.js" defer></script>
+<script src="/assets/js/verses.js" defer></script><script src="/assets/js/verse-splash.js" defer></script>
+<script src="/assets/js/ambient.js" defer></script>
+<script src="/assets/js/profile-menu.js" defer></script>
+</body>
+</html>

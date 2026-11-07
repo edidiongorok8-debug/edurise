@@ -1,0 +1,192 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "public/**/*.*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/v1/(.*)",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/competitions",
+      "dest": "public/pages/competitions.html"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "public/assets/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "public/pages/favicon.ico"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "dest": "public/pages/apple-touch-icon.png"
+    },
+    {
+      "src": "/sign-in",
+      "dest": "public/pages/sign-in.html"
+    },
+    {
+      "src": "/sign-in.html",
+      "dest": "public/pages/sign-in.html"
+    },
+    {
+      "src": "/register",
+      "dest": "public/pages/register.html"
+    },
+    {
+      "src": "/register.html",
+      "dest": "public/pages/register.html"
+    },
+    {
+      "src": "/dashboard",
+      "dest": "public/pages/dashboard.html"
+    },
+    {
+      "src": "/dashboard.html",
+      "dest": "public/pages/dashboard.html"
+    },
+    {
+      "src": "/privacy",
+      "dest": "public/pages/privacy.html"
+    },
+    {
+      "src": "/privacy.html",
+      "dest": "public/pages/privacy.html"
+    },
+    {
+      "src": "/terms",
+      "dest": "public/pages/terms.html"
+    },
+    {
+      "src": "/terms.html",
+      "dest": "public/pages/terms.html"
+    },
+    {
+      "src": "/robots.txt",
+      "dest": "public/robots.txt"
+    },
+    {
+      "src": "/sitemap.xml",
+      "dest": "public/sitemap.xml"
+    },
+    {
+      "src": "/og-image.png",
+      "dest": "public/og-image.png"
+    },
+    {
+      "src": "/",
+      "dest": "public/pages/sign-in.html"
+    },
+    {
+      "src": "/index.html",
+      "dest": "public/pages/index.html"
+    },
+    {
+      "src": "/student",
+      "dest": "public/pages/student.html"
+    },
+    {
+      "src": "/student.html",
+      "dest": "public/pages/student.html"
+    },
+    {
+      "src": "/study",
+      "dest": "public/pages/study.html"
+    },
+    {
+      "src": "/study.html",
+      "dest": "public/pages/study.html"
+    },
+    {
+      "src": "/tutor",
+      "dest": "public/pages/tutor.html"
+    },
+    {
+      "src": "/school-finder",
+      "dest": "public/pages/school-finder.html"
+    },
+    {
+      "src": "/practice",
+      "dest": "public/pages/practice.html"
+    },
+    {
+      "src": "/practice.html",
+      "dest": "public/pages/practice.html"
+    },
+    {
+      "src": "/past-questions",
+      "dest": "public/pages/past-questions.html"
+    },
+    {
+      "src": "/past-questions.html",
+      "dest": "public/pages/past-questions.html"
+    },
+    {
+      "src": "/settings",
+      "dest": "public/pages/settings.html"
+    },
+    {
+      "src": "/settings.html",
+      "dest": "public/pages/settings.html"
+    },
+    {
+      "src": "/manifest.webmanifest",
+      "dest": "public/manifest.webmanifest"
+    },
+    {
+      "src": "/sw.js",
+      "dest": "public/sw.js"
+    },
+    {
+      "src": "/icons/(.*)",
+      "dest": "public/icons/$1"
+    },
+    {
+      "src": "/setup",
+      "dest": "public/pages/setup.html"
+    },
+    {
+      "src": "/setup.html",
+      "dest": "public/pages/setup.html"
+    },
+    {
+      "src": "/home",
+      "dest": "public/pages/index.html"
+    },
+    {
+      "src": "/home.html",
+      "dest": "public/pages/index.html"
+    },
+    {
+      "src": "/community",
+      "dest": "public/pages/community.html"
+    },
+    {
+      "src": "/community.html",
+      "dest": "public/pages/community.html"
+    },
+    {
+      "src": "/chat",
+      "dest": "public/pages/chat.html"
+    },
+    {
+      "src": "/chat.html",
+      "dest": "public/pages/chat.html"
+    },
+    {
+      "src": "/(.*)",
+      "status": 404,
+      "dest": "public/pages/404.html"
+    }
+  ]
+}

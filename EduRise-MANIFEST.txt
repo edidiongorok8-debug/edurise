@@ -1,0 +1,33 @@
+EduRise — Full Project Snapshot
+Captured: 24 October 2026
+Live site: https://edurise-edu-rise.vercel.app
+
+WHAT IS IN HERE
+1. public/ — the live website (what Vercel serves)
+   public/pages/ — all 17 HTML pages (home, student corner, study tracker,
+   AI tutor, past questions, school finder, competitions, registration,
+   staff dashboard, settings, sign-in, setup, legal pages)
+   public/assets/js/ — all frontend logic (quiz engine, tutor chat,
+   competitions, past questions, study timer, theme, install banner…)
+   public/assets/css/ — styling (app.css)
+   public/icons/, manifest.webmanifest, service worker (sw.js) — PWA bits
+2. api/ — Python FastAPI backend deployed on Vercel
+   api/app/api/v1/ — endpoints: registrations, competitions, tutor,
+   community, staff, analytics, auth, tasks
+   api/app/models/ — database models (zones, schools, users, tournaments)
+   api/app/db/ — database session and migrations
+3. frontend/ — build copy of public/ (kept for tooling)
+4. docs/ — design specs (community layer, data model)
+5. vercel.json — routing and deployment config
+6. README.md, DEPLOYMENT.md — how to run and deploy
+7. backend/ — early prototype (superseded by api/, kept for reference)
+
+NOT INCLUDED ON PURPOSE
+.env.local and backend/.env — these hold the live DATABASE password.
+They never leave the project. In a fresh copy, copy .env.example to
+.env.local and fill in your own database URL.
+
+ARCHITECTURE IN ONE LINE
+Static HTML/JS/CSS frontend + FastAPI backend + Neon Postgres database,
+hosted on Vercel. Google OAuth for sign-in. No student personal data
+is collected or shared (NDPA 2023 compliant by design).

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Sitemap: https://edurise-edu-rise.vercel.app/sitemap.xml
