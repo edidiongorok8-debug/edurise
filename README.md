@@ -152,3 +152,4 @@ A: Adoption by schools and keeping moderation consistent at scale. Both are answ
 
 *Q: Why should a school trust you with its profile?*
 A: Because nothing private is asked for. The school publishes what it chooses, and it can take it down at any time.
+Roadmap : fees tracker first, then report cards 
